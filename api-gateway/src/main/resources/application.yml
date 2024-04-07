@@ -1,0 +1,47 @@
+server:
+  port: 8765
+
+spring:
+  application:
+    name: api-gateway
+  security:
+    oauth2:
+      client:
+        registration:
+          okta:
+            redirect-uri: http://localhost:4200/login
+  cloud:
+    gateway:
+      routes:
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/api/v1/order/**
+          filters:
+            - TokenRelay=
+        - id: event-service
+          uri: lb://EVENT-SERVICE
+          predicates:
+            - Path=/api/v1/**
+          filters:
+            - TokenRelay=
+
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+
+okta:
+  oauth2:
+    issuer: https://dev-44580046.okta.com/oauth2/default
+    audience: api://default
+    client-id: 0oafxabpjx17KyfqO5d7
+    client-secret: eqPcXbs7zqQAGk6pEW4oX5xDTvQBV6XdcddYK5gYutSd3g9m_qypgwq9gUZCRsMp
+    scopes: openid, profile , email, offline_access
+
+
+tokenEndpoint: https://dev-44580046.okta.com/oauth2/default/v1/token
+
+
+# spring.cloud.gateway.discovery.locator.enabled=true
