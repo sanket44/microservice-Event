@@ -8,20 +8,20 @@ spring:
     import: optional:configserver:http://localhost:8888
   application:
     name: vendor-service
-#  datasource:
-#    url: jdbc:postgresql://localhost:5432/eventManagement
-#    username: postgres
-#    password: sdworld@456
-#    driver-class-name: org.postgresql.Driver
-#  jpa:
-#    show-sql: true
-#    hibernate:
-#      ddl-auto: update
-#    properties:
-#      hibernate:
-#        format_sql: true
-#    database: postgresql
-#    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: jdbc:postgresql://localhost:5432/eventManagement
+    username: postgres
+    password: sdworld@456
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
   security:
     oauth2:
       resourceserver:
@@ -35,6 +35,7 @@ spring:
             scope: internal
             client-id: 0oafxabpjx17KyfqO5d7
             client-secret: eqPcXbs7zqQAGk6pEW4oX5xDTvQBV6XdcddYK5gYutSd3g9m_qypgwq9gUZCRsMp
+            redirect-uri: http://localhost:4200
         provider:
           okta:
             issuer-uri: https://dev-44580046.okta.com/oauth2/default
@@ -48,14 +49,21 @@ okta:
 
 
 server:
-  port: 8000
-
-logging:
-  level:
-    org.springframework.web: DEBUG
-    com.fasterxml.jackson: DEBUG
+  port: 8001
 
 eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    com.fasterxml.jackson: DEBUG
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}] #SB3"

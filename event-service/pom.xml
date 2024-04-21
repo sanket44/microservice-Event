@@ -11,7 +11,7 @@
 	<groupId>com</groupId>
 	<artifactId>event-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Event</name>
+	<name>event-service</name>
 	<description>EventManagement</description>
 	<properties>
 		<java.version>19</java.version>

@@ -1,24 +1,35 @@
 package com.eventManagement.vendorservice.controllers;
 
+import com.eventManagement.vendorservice.Order.Order;
+import com.eventManagement.vendorservice.Repositories.VendorRepository;
 import com.eventManagement.vendorservice.configurations.Configuration;
+import com.eventManagement.vendorservice.configurations.OrderServiceProxy;
+import com.eventManagement.vendorservice.models.Vendor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/vendor")
 public class VendorController {
     @Autowired
-    private Configuration configuration;
+    private VendorRepository vendorRepository;
     @Autowired
-    private Environment environment;
-    @GetMapping("/getVendorOrders/{id}")
-    public String getVendorOrders(@PathVariable Integer id) {
-        return "In process  "+environment.getProperty("local.server.port")+"  ---"+(id*2);
+    private OrderServiceProxy orderServiceProxy;
+    @GetMapping("/")
+    public List<Vendor> getVendors() {
+        return vendorRepository.findAll();
     }
-
+    @GetMapping("/:id")
+    public Optional<Vendor> getVendor(@RequestParam Integer id) {
+        return vendorRepository.findById(id);
+    }
+    @GetMapping("/getVendorOrders/{id}")
+    public List<Order> getVendorOrders(@PathVariable Integer id) {
+        return orderServiceProxy.getVendorOrders(id);
+    }
 }
 

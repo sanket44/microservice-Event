@@ -1,0 +1,26 @@
+package com.eventManagement.vendorservice.OauthRequestInterceptor;
+
+import feign.RequestInterceptor;
+import feign.RequestTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
+
+@Configuration
+public class OauthRequestInterceptor implements RequestInterceptor {
+    @Autowired
+    private OAuth2AuthorizedClientManager authorizedClientManager;
+
+    @Override
+    public void apply(RequestTemplate requestTemplate) {
+        System.err.println("EEEEEEEEEEEs");
+        requestTemplate.header("Authorization", "Bearer "
+                + authorizedClientManager
+                .authorize(OAuth2AuthorizeRequest
+                        .withClientRegistrationId("internal-client")
+                        .principal("internal")
+                        .build()).getAccessToken().getTokenValue());
+
+    }
+}

@@ -1,0 +1,119 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    image: 'api-gateway:latest'
+    build:
+      context: .
+    container_name: api-gateway
+    depends_on:
+      - naming-server
+    ports:
+      - "8765:8765"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://naming-server:8761/eureka
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin-server:9411/api/v2/spans
+
+
+
+  naming-server:
+    image: 'naming-server:latest'
+    build:
+      context: .
+    container_name: naming-server
+    ports:
+      - "8761:8761"
+
+
+  order-service:
+    image: 'order-service:latest'
+    build:
+      context: .
+    container_name: order-service
+    depends_on:
+      - naming-server
+      - api-gateway
+      - db
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://naming-server:8761/eureka
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin-server:9411/api/v2/spans
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=sdworld@456
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/eventManagement
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=sdworld@456
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    ports:
+      - "8000:8000"
+
+
+  event-service:
+    image: 'event-service:latest'
+    build:
+      context: .
+    container_name: event-service
+    depends_on:
+      - naming-server
+      - api-gateway
+      - db
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://naming-server:8761/eureka
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin-server:9411/api/v2/spans
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=sdworld@456
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/eventManagement
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=sdworld@456
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    ports:
+      - "8005:8005"
+
+
+  vendor-service:
+    image: 'vendor-service:latest'
+    build:
+      context: .
+    container_name: vendor-service
+    depends_on:
+      - naming-server
+      - api-gateway
+      - db
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://naming-server:8761/eureka
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin-server:9411/api/v2/spans
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=sdworld@456
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/eventManagement
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=sdworld@456
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    ports:
+      - "8001:8001"
+
+
+
+  db:
+    image: postgres:latest
+    container_name: db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=sdworld@456
+      - POSTGRES_DB=eventManagement
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+
+
+  zipkin-server:
+    image: openzipkin/zipkin:2.23
+    ports:
+      - "9411:9411"
+    restart: always #Restart if there is a problem starting up
+
+
+
+volumes:
+  postgres_data:   # Defining the named volume
+

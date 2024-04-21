@@ -55,10 +55,8 @@ public class AuthController {
 
     @GetMapping("/token")
     public ResponseEntity<String> handleCallback(@RequestParam("code") String code) {
-        // Exchange authorization code for access token
         String accessToken = exchangeCodeForToken(code);
         String jsonAccessToken = "{\"access_token\": \"" + accessToken + "\"}";
-        // Store access token securely, e.g., in session or database
         return ResponseEntity.ok().body(jsonAccessToken);
     }
 
@@ -71,14 +69,10 @@ public class AuthController {
         body.add("grant_type", "authorization_code");
         body.add("code", code);
         body.add("redirect_uri", "http://localhost:4200/login");
-
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
-
         try {
             ResponseEntity<Map> response = restTemplate.postForEntity(tokenEndpoint, request, Map.class);
             Map<String, Object> tokenResponse = response.getBody();
-            System.err.println(tokenResponse.toString());
-            System.err.println(tokenResponse.keySet());
             String accessToken = (String) tokenResponse.get("access_token");
             return accessToken;
         } catch (Exception e) {

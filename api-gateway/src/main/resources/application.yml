@@ -13,10 +13,16 @@ spring:
   cloud:
     gateway:
       routes:
+        - id: vendor-service
+          uri: lb://VENDOR-SERVICE
+          predicates:
+            - Path=/vendor/**
+          filters:
+            - TokenRelay=
         - id: order-service
           uri: lb://ORDER-SERVICE
           predicates:
-            - Path=/api/v1/order/**
+            - Path=/order/**
           filters:
             - TokenRelay=
         - id: event-service
@@ -25,6 +31,7 @@ spring:
             - Path=/api/v1/**
           filters:
             - TokenRelay=
+
 
 
 eureka:
@@ -38,10 +45,23 @@ okta:
     audience: api://default
     client-id: 0oafxabpjx17KyfqO5d7
     client-secret: eqPcXbs7zqQAGk6pEW4oX5xDTvQBV6XdcddYK5gYutSd3g9m_qypgwq9gUZCRsMp
-    scopes: openid, profile , email, offline_access
+    scopes: openid, profile , email, offline_access ,internal
 
 
 tokenEndpoint: https://dev-44580046.okta.com/oauth2/default/v1/token
 
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    com.fasterxml.jackson: DEBUG
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}] #SB3"
+
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
 
 # spring.cloud.gateway.discovery.locator.enabled=true

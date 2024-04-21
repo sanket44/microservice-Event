@@ -1,45 +1,9 @@
-//package com.eventManagement.orderservice.controllers;
-//
-//import com.eventManagement.orderservice.Order.Order;
-//import com.eventManagement.orderservice.Repositories.OrderRepository;
-//import com.eventManagement.orderservice.config.VendorServiceProxy;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.core.env.Environment;
-//import org.springframework.security.access.prepost.PreAuthorize;
-//import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RestController;
-//
-//import java.util.List;
-//
-//@RestController
-//@RequestMapping("/order")
-//public class OrderController {
-//    @Autowired
-//    private Environment environment;
-//    @Autowired
-//    VendorServiceProxy vendorServiceProxy;
-//    @Autowired
-//    OrderRepository orderRepository;
-//
-//    @GetMapping("/getInstance")
-//    public String getInstance() {
-////        return environment.getProperty("local.server.port");
-//        return vendorServiceProxy.getVendorOrders(78);
-//    }
-//    @PreAuthorize("hasAuthority('vendor')")
-//    @GetMapping("/getOrders")
-//    public List<Order> getOrders() {
-////        return environment.getProperty("local.server.port");
-////        orderRepository.findAllByVendorId(3).forEach(order -> System.out.println(order.));
-//        return orderRepository.findAllByVendorId(3);
-//    }
-//}
 package com.eventManagement.orderservice.controllers;
 
 import com.eventManagement.orderservice.Order.CateringOrder;
 import com.eventManagement.orderservice.Order.CreateOrderRequest;
 import com.eventManagement.orderservice.Order.FlowersOrder;
+import com.eventManagement.orderservice.Order.Order;
 import com.eventManagement.orderservice.Repositories.UserRepository;
 import com.eventManagement.orderservice.models.EventOrder;
 import com.eventManagement.orderservice.services.EventOrderService;
@@ -55,10 +19,11 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/order")
+@RequestMapping("/order")
 public class OrderController {
     @Autowired
     private OrderService orderService;
@@ -106,5 +71,10 @@ public class OrderController {
     @GetMapping("/check")
     public String check() {
         return "all good";
+    }
+
+    @GetMapping("/getVendorOrders/{id}")
+    public List<Order> getVendorOrders(@PathVariable Integer id) {
+        return orderService.getOrdersForVendors(id);
     }
 }

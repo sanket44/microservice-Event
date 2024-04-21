@@ -33,7 +33,6 @@ public class OktaOAuth2WebSecurity {
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http.csrf(csrfSpec -> csrfSpec.disable())
-
                 .authorizeExchange(exchanges -> exchanges.pathMatchers("/authenticate/token").permitAll() // Allow public URLs
                         .anyExchange().authenticated()).oauth2Login(withDefaults()).oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults())).build();
     }
